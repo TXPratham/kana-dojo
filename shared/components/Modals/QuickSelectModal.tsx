@@ -11,6 +11,8 @@ import {
 import { useClick } from '@/shared/hooks/useAudio';
 import { ActionButton } from '@/shared/components/ui/ActionButton';
 
+// Canary change: verifying Husky/Prettier pre-commit formatting.
+
 type QuickSelectModalProps = {
   isOpen: boolean;
   onClose: () => void;
