@@ -7,16 +7,7 @@ import {
   faGithub,
   faPatreon
 } from '@fortawesome/free-brands-svg-icons';
-import {
-  /* Keyboard, */
-  /* Mountain, */
-  /* Heart, */
-  Coffee,
-  Palette,
-  GitBranch,
-  Type,
-  LucideIcon
-} from 'lucide-react';
+import { Coffee, Palette, GitBranch, Type, LucideIcon } from 'lucide-react';
 import clsx from 'clsx';
 import { useClick } from '@/shared/hooks/useAudio';
 import usePreferencesStore from '@/features/Preferences/store/usePreferencesStore';
@@ -24,7 +15,7 @@ import useCrazyModeStore from '@/features/CrazyMode/store/useCrazyModeStore';
 import useDecorationsStore from '@/shared/store/useDecorationsStore';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-const APP_VERSION = '0.1.10 (alpha)';
+import { APP_VERSION_DISPLAY } from '@/shared/lib/constants';
 
 type SocialLink = {
   icon: IconDefinition | LucideIcon;
@@ -44,16 +35,6 @@ const socialLinks: SocialLink[] = [
     url: 'https://discord.gg/CyvBNNrSmb',
     type: 'fontawesome'
   },
-  /* { icon: Keyboard, url: 'https://monkeytype.com', type: 'lucide' }, */
-  /* { icon: Mountain, url: 'https://hanabira.org', type: 'lucide' }, */
-  /*
-  {
-    icon: Heart,
-    url: 'https://ko-fi.com/kanadojo',
-    type: 'lucide',
-    special: 'donate'
-  }
-  */
   {
     icon: Coffee,
     url: 'https://ko-fi.com/kanadojo',
@@ -92,7 +73,7 @@ const MobileBottomBar = () => {
   const infoItems = [
     { icon: Palette, text: effectiveTheme.replace('-', ' ') },
     { icon: Type, text: font.toLowerCase() },
-    { icon: GitBranch, text: `v${APP_VERSION}` }
+    { icon: GitBranch, text: `v${APP_VERSION_DISPLAY}` }
   ];
 
   return (

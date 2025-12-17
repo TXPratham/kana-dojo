@@ -759,13 +759,20 @@ const themeSets: ThemeGroup[] = baseThemeSets.map(buildThemeGroup);
 
 export default themeSets;
 
-// Flatten all themes into a map for easy lookup
-const themeMap = new Map<string, Theme>();
-themeSets.forEach(group => {
-  group.themes.forEach(theme => {
-    themeMap.set(theme.id, theme);
-  });
-});
+// Lazy-initialized theme map for efficient lookups
+let _themeMap: Map<string, Theme> | null = null;
+
+function getThemeMap(): Map<string, Theme> {
+  if (!_themeMap) {
+    _themeMap = new Map<string, Theme>();
+    themeSets.forEach(group => {
+      group.themes.forEach(theme => {
+        _themeMap!.set(theme.id, theme);
+      });
+    });
+  }
+  return _themeMap;
+}
 
 /**
  * Converts a ThemeTemplate (from custom store) to a full Theme with accent colors.
@@ -785,22 +792,31 @@ function buildThemeFromTemplate(template: {
   };
 }
 
-// populate map immediately with current store state
-useCustomThemeStore
-  .getState()
-  .themes.forEach(theme =>
-    themeMap.set(theme.id, buildThemeFromTemplate(theme))
-  );
+// Populate map with custom themes from store (lazy)
+let _customThemesLoaded = false;
 
-// subscription for store updates
-useCustomThemeStore.subscribe(state => {
-  state.themes.forEach(theme =>
-    themeMap.set(theme.id, buildThemeFromTemplate(theme))
-  );
-});
+function ensureCustomThemesLoaded(): void {
+  if (_customThemesLoaded) return;
+  _customThemesLoaded = true;
+
+  const themeMap = getThemeMap();
+  useCustomThemeStore
+    .getState()
+    .themes.forEach(theme =>
+      themeMap.set(theme.id, buildThemeFromTemplate(theme))
+    );
+
+  // Subscribe to store updates
+  useCustomThemeStore.subscribe(state => {
+    state.themes.forEach(theme =>
+      themeMap.set(theme.id, buildThemeFromTemplate(theme))
+    );
+  });
+}
 
 export function applyTheme(themeId: string) {
-  const theme = themeMap.get(themeId);
+  ensureCustomThemesLoaded();
+  const theme = getThemeMap().get(themeId);
 
   if (!theme) {
     console.error(`Theme "${themeId}" not found`);
@@ -845,7 +861,8 @@ export function applyThemeObject(theme: Theme) {
 
 // Helper to get a specific theme
 export function getTheme(themeId: string): Theme | undefined {
-  return themeMap.get(themeId);
+  ensureCustomThemesLoaded();
+  return getThemeMap().get(themeId);
 }
 
 /**

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronsUp } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
@@ -12,6 +12,17 @@ export default function BackToTop() {
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const container = useRef<HTMLElement | null>(null);
+  const scrollTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const onScroll = useCallback(() => {
+    if (scrollTimeout.current) return;
+    scrollTimeout.current = setTimeout(() => {
+      if (container.current) {
+        setVisible(container.current.scrollTop > 300);
+      }
+      scrollTimeout.current = null;
+    }, 100);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);
@@ -24,15 +35,16 @@ export default function BackToTop() {
 
     if (!container.current) return;
 
-    const onScroll = () => {
-      setVisible(container.current!.scrollTop > 300);
-    };
-
     container.current.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    return () => container.current?.removeEventListener('scroll', onScroll);
-  }, []);
+    return () => {
+      container.current?.removeEventListener('scroll', onScroll);
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
+    };
+  }, [onScroll]);
 
   const isRootPath = pathname === '/' || pathname === '';
 

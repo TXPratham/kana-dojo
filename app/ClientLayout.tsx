@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import usePreferencesStore from '@/features/Preferences/store/usePreferencesStore';
 import useCrazyModeStore from '@/features/CrazyMode/store/useCrazyModeStore';
 import { usePathname } from 'next/navigation';
@@ -76,7 +76,9 @@ export default function ClientLayout({
     : '';
 
   useEffect(() => {
-    applyTheme(effectiveTheme); // This now sets both CSS variables AND data-theme attribute
+    startTransition(() => {
+      applyTheme(effectiveTheme); // This now sets both CSS variables AND data-theme attribute
+    });
 
     if (typeof window !== 'undefined') {
       window.history.scrollRestoration = 'manual';
@@ -132,7 +134,7 @@ export default function ClientLayout({
 
   return (
     <div
-      data-scroll-restoration-id="container"
+      data-scroll-restoration-id='container'
       className={clsx(
         'bg-[var(--background-color)] text-[var(--main-color)] min-h-[100dvh] max-w-[100dvw]',
         fontClassName

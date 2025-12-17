@@ -13,6 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "clean": "rimraf .next tsconfig.tsbuildinfo",
+    "clean:all": "rimraf .next tsconfig.tsbuildinfo node_modules/.cache",
     "prepare": "husky",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "i18n:validate": "node scripts/i18n/validate-translations.js",
