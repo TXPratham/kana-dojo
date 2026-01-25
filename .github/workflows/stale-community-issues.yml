@@ -160,14 +160,6 @@ jobs:
                   console.log(`Closing stale unassigned issue #${issue.number}: ${issue.title}`);
                   closedUnassigned += 1;
 
-                  const closedMsg = t.unassignedClosed;
-                  await github.rest.issues.createComment({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    issue_number: issue.number,
-                    body: `${closedMsg.title} ${closedMsg.reason}\n\n${closedMsg.reassurance}\n\n${closedMsg.footer}`
-                  });
-
                   await github.rest.issues.update({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
@@ -214,14 +206,6 @@ jobs:
                   });
                   console.log(`Unassigned ${assignees.join(', ')} from issue #${issue.number}`);
                 }
-                
-                const closedMsg = t.closed;
-                await github.rest.issues.createComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  issue_number: issue.number,
-                  body: `${closedMsg.title} ${closedMsg.reason}\n\n${closedMsg.reassurance}\n\n${closedMsg.footer}`
-                });
                 
                 await github.rest.issues.update({
                   owner: context.repo.owner,
